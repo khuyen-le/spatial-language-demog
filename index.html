@@ -41,24 +41,24 @@
     }
 
     /* initialize jsPsych */
-    const jsPsych = initJsPsych({
+    var jsPsych = initJsPsych({
       show_progress_bar: true,
       auto_update_progress_bar: true,
-        extensions: [
-          {
-            type: jsPsychExtensionPipe,
-            params: {
-              experiment_id: "Q1ZBtysHLlWL",
-              filename: () => `${subject_id}.csv`
-            }
+      extensions: [
+        {
+          type: jsPsychExtensionPipe,
+          params: {
+            experiment_id: "Q1ZBtysHLlWL",
+            filename: () => `${subject_id}.csv`
           }
-        ]
+        }
+      ]
     }); 
 
     /* create timeline */
     var timeline = [];
 
-    var subject_id = "";
+    var subject_id = jsPsych.randomization.randomID(10); // initialize with random ID so that partial data can be saved.
     var filename = "";
 
     var pid_enter = {
@@ -75,7 +75,6 @@
         subject_id = data.response["pid"]
         jsPsych.data.addProperties({subject_id: data.response["pid"]})
         //filename = `${subject_id}.csv`;
-
         console.log(subject_id)
       }
     }
