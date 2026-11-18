@@ -41,44 +41,18 @@
     }
 
     /* initialize jsPsych */
-    var jsPsych = initJsPsych({
+    const jsPsych = initJsPsych({
       show_progress_bar: true,
       auto_update_progress_bar: true,
         extensions: [
           {
             type: jsPsychExtensionPipe,
             params: {
-              experiment_id: "dhLxQKna79ZT",
+              experiment_id: "Q1ZBtysHLlWL",
               filename: () => `${subject_id}.csv`
             }
           }
         ]
-      // on_finish: function(){
-      //   fetch("https://pipe.jspsych.org/api/data/", {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //       Accept: "*/*",
-      //     },
-      //     body: JSON.stringify({
-      //       experimentID: "f5Vp3IN4bl2I",
-      //       filename: `${subject_id}.json`,
-      //       data: JSON.stringify(jsPsych.data.get()),
-      //     }),
-      //   })
-      //   .then(response => {
-      //     // Check if the request was successful
-      //     if (response.ok) {
-      //       // Show the thank you popup
-      //       alert("Thank you for completing the study! Please DON'T close this message and inform the researcher.");
-      //     } else {
-      //       alert("Failed to submit data. Please inform the researcher.");
-      //     }
-      //   })
-      //   .catch(error => {
-      //     console.error("Error submitting data:", error);
-      //   });
-      // }
     }); 
 
     /* create timeline */
