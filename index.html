@@ -3,8 +3,6 @@
 
 <head>
   <title>Spatial Word Learning Consent & Demographic</title>
-  <script src="https://unpkg.com/@jspsych/extension-pipe@0.2.0"></script>
-  <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script src="scripts/lodash/lodash.js"></script>
   <script src="scripts/jspsych.js"></script>
@@ -40,26 +38,44 @@
       return jsPsych.data.get().last(1).values()[0].response[key];
     }
 
+    // DataPipe experiment ID (https://pipe.jspsych.org)
+    var DATAPIPE_EXPERIMENT_ID = "Q1ZBtysHLlWL";
+
     /* initialize jsPsych */
     var jsPsych = initJsPsych({
       show_progress_bar: true,
       auto_update_progress_bar: true,
-      extensions: [
-        {
-          type: jsPsychExtensionPipe,
-          params: {
-            experiment_id: "Q1ZBtysHLlWL",
-            filename: () => `${subject_id}.csv`
+      on_finish: function(){
+        // subject_id is read here (after the PID trial), so the file is named by PID
+        fetch("https://pipe.jspsych.org/api/data/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "*/*",
+          },
+          body: JSON.stringify({
+            experimentID: DATAPIPE_EXPERIMENT_ID,
+            filename: `${subject_id}.csv`,
+            data: jsPsych.data.get().csv(),
+          }),
+        })
+        .then(response => {
+          if (response.ok) {
+            alert("Thank you for completing the study! Please DON'T close this message and inform the researcher.");
+          } else {
+            alert("Failed to submit data. Please inform the researcher.");
           }
-        }
-      ]
-    }); 
+        })
+        .catch(error => {
+          console.error("Error submitting data:", error);
+        });
+      }
+    });
 
     /* create timeline */
     var timeline = [];
 
-    var subject_id = jsPsych.randomization.randomID(10); // initialize with random ID so that partial data can be saved.
-    var filename = "";
+    var subject_id = jsPsych.randomization.randomID(10); // fallback in case no PID is set
 
     var pid_enter = {
       type: jsPsychSurveyText,
@@ -71,11 +87,12 @@
           required: true
         }
       ],
+      data: {
+        phase: "pid"
+      },
       on_finish: function(data) {
-        subject_id = data.response["pid"]
-        jsPsych.data.addProperties({subject_id: data.response["pid"]})
-        //filename = `${subject_id}.csv`;
-        console.log(subject_id)
+        subject_id = data.response["pid"];
+        jsPsych.data.addProperties({subject_id: data.response["pid"]});
       }
     }
 
